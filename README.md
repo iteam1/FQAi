@@ -117,6 +117,26 @@ source .env
 
 - Start weaviate and neo4j (*required*): `docker compose up -d` or `docker-compose up -d`
 
+```bash
+# Make sure .env exists
+cp .env.template .env && source .env
+
+# Start services
+docker compose up -d
+
+# Check status
+docker compose ps
+
+# View logs
+docker compose logs -f
+
+# Check health
+docker ps
+```
+
+If you want to stop the services, safely use `docker compose down` or `docker-compose down` do not use `-v` flag
+
+
 ## Targets
 1. Initialize the codebase
 2. Complete the flexible configuration

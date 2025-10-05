@@ -1,0 +1,96 @@
+networks:
+  fqa-network:
+    name: ${NETWORK_NAME}
+    external: true
+
+volumes:
+  weaviate-data:
+    name: ${VOLUME_WEAVIATE_DATA}
+  neo4j-data:
+    name: ${VOLUME_NEO4J_DATA}
+  neo4j-logs:
+    name: ${VOLUME_NEO4J_LOGS}
+  neo4j-import:
+    name: ${VOLUME_NEO4J_IMPORT}
+
+services:
+  weaviate:
+    image: semitechnologies/weaviate:latest
+    container_name: ${WEAVIATE_CONTAINER_NAME}
+    networks:
+      - fqa-network
+    ports:
+      - "${WEAVIATE_HTTP_PORT}:8080"
+      - "${WEAVIATE_GRPC_PORT}:50051"
+      - "${WEAVIATE_METRICS_PORT}:6060"
+    volumes:
+      - weaviate-data:${WEAVIATE_PERSIST_PATH}
+    environment:
+      - QUERY_DEFAULTS_LIMIT=${WEAVIATE_QUERY_DEFAULTS_LIMIT}
+      - AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=${WEAVIATE_ANON_ACCESS}
+      - PERSISTENCE_DATA_PATH=${WEAVIATE_PERSIST_PATH}
+      - DEFAULT_VECTORIZER_MODULE=${WEAVIATE_VECTORIZER}
+      - ENABLE_MODULES=${WEAVIATE_MODULES}
+      - CLUSTER_HOSTNAME=${WEAVIATE_CONTAINER_NAME}
+    deploy:
+      resources:
+        limits:
+          memory: ${WEAVIATE_MEMORY}
+          cpus: '${WEAVIATE_CPUS}'
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/v1/.well-known/ready > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  neo4j:
+    image: neo4j:5.20
+    container_name: ${NEO4J_CONTAINER_NAME}
+    networks:
+      - fqa-network
+    ports:
+      - "${NEO4J_HTTP_PORT}:7474"
+      - "${NEO4J_BOLT_PORT}:7687"
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - neo4j-import:/var/lib/neo4j/import
+    environment:
+      - NEO4J_AUTH=${NEO4J_USERNAME}/${NEO4J_PASSWORD}
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_db_tx__log_rotation_retention__policy=100M size
+      - NEO4J_dbms_memory_heap_initial__size=${NEO4J_HEAP_SIZE}
+      - NEO4J_dbms_memory_heap_max__size=${NEO4J_HEAP_SIZE}
+      - NEO4J_dbms_memory_pagecache_size=${NEO4J_PAGECACHE_SIZE}
+    deploy:
+      resources:
+        limits:
+          memory: ${NEO4J_MEMORY}
+          cpus: '${NEO4J_CPUS}'
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474/ > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
