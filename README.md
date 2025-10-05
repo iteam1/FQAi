@@ -2,6 +2,27 @@
 
 ## Quickstart
 
+- Create a virtual environment and activate it
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+- Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+or 
+
+```bash
+uv venv .venv -p 3.10
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
 ## Targets
 1. Initialize the codebase
 2. Complete the flexible configuration
