@@ -1,5 +1,7 @@
 # FQAi
 
+## Architecture
+
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │           Shared Docker Network: fqa-network                 │
@@ -32,6 +34,40 @@
 ```
 
 ## Quickstart
+
+Get up and running in 5 minutes:
+
+```bash
+# 1. Clone and setup Python environment
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+# 2. Configure environment (edit REPLICA_ID if needed)
+cp .env.template .env
+
+# 3. Make scripts executable
+chmod +x scripts/*.sh
+
+# 4. Start shared services
+docker network create fqa-network
+make ollama          # Start Ollama + download models
+make cadvisor        # Optional: monitoring
+
+# 5. Start databases (Weaviate + Neo4j)
+docker compose up -d
+
+# 6. Start FastAPI backend
+source .venv/bin/activate && source .env && python -m uvicorn backend.main:app --host 0.0.0.0 --port ${BACKEND_PORT} --reload
+```
+
+**Access your services:**
+- FastAPI: http://localhost:${BACKEND_PORT}/docs
+- Weaviate: http://localhost:${WEAVIATE_HTTP_PORT}
+- Neo4j: http://localhost:${NEO4J_HTTP_PORT}
+- Ollama: http://localhost:${OLLAMA_PORT}
+- cAdvisor: http://localhost:8090
+
+## Setup
 
 **Prerequisites**
 
@@ -107,7 +143,7 @@ Load environment variables:
 source .env
 ```
 
-- Create `fqai-network`: `docker network create fqai-network`
+- Create `fqa-network`: `docker network create fqa-network`
 
 - Give permissions to scripts: `chmod +x scripts/*.sh`
 
@@ -135,6 +171,8 @@ docker ps
 ```
 
 If you want to stop the services, safely use `docker compose down` or `docker-compose down` do not use `-v` flag
+
+- Start backend: `uvicorn backend.main:app --host 0.0.0.0 --port ${BACKEND_PORT} --reload` or `python backend/main.py` or `source .venv/bin/activate && source .env && python -m uvicorn backend.main:app --host 0.0.0.0 --port ${BACKEND_PORT} --reload`(**Note**: install `uvicorn` if not installed `uv pip install uvicorn`)
 
 
 ## Targets
@@ -189,5 +227,7 @@ If you want to stop the services, safely use `docker compose down` or `docker-co
 ## References
 
 - [Ollama](https://ollama.com/)
+- [Ollama Python](https://github.com/ollama/ollama-python)
 - [Weaviate](https://weaviate.io/)
 - [Neo4j](https://neo4j.com/)
+- [FastAPI](https://fastapi.tiangolo.com/)
