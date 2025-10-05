@@ -20,11 +20,14 @@
 │         ├──────────┤  ├──────────┤   ├──────────┤            │
 │         │Weaviate-1│  │Weaviate-2│   │Weaviate-3│            │
 │         │  :8081   │  │  :8082   │   │  :8083   │            │
+│         │  :6061   │  │  :6062   │   │  :6063   │            │
+│         │  :50051  │  │  :50052  │   │  :50053  │            │
 │         ├──────────┤  ├──────────┤   ├──────────┤            │
 │         │ Neo4j-1  │  │ Neo4j-2  │   │ Neo4j-3  │            │
-│         │  :7475   │  │  :7476   │   │  :7477   │            │
-│         │  :7688   │  │  :7689   │   │  :7690   │            │
+│         │  :7474   │  │  :7475   │   │  :7476   │            │
+│         │  :7687   │  │  :7688   │   │  :7689   │            │
 │         └──────────┘  └──────────┘   └──────────┘            │
+│                                                              │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -68,16 +71,34 @@ cp .env.template .env
 
 Edit the `.env` file to set the environment variables
 
+For general configuration:
+
+```bash
+REPLICA_ID=<replica_id>
+BACKEND_PORT=<backend_port> # default: 8000, 8001, 8002, ...
+
+```
+
 For Weaviate:
 
 ```bash
+WEAVIATE_CONTAINER_NAME="weaviate-${REPLICA_ID}"
+WEAVIATE_HTTP_PORT=<weaviate_http_port> # default: 8080, 8081, 8082, ...
+WEAVIATE_METRICS_PORT=<weaviate_metrics_port> # default: 6060, 6061, 6062, ...
+WEAVIATE_GRPC_PORT=<weaviate_grpc_port> # default: 50051, 50052, 50053, ...
+VOLUME_WEAVIATE_DATA="weaviate-data-${REPLICA_ID}"
 
 ```
 
 For Neo4j:
 
 ```bash
-
+NEO4J_CONTAINER_NAME="neo4j-${REPLICA_ID}"
+NEO4J_HTTP_PORT=<neo4j_http_port> # default: 7474, 7475, 7476, ...
+NEO4J_BOLT_PORT=<neo4j_bolt_port> # default: 7687, 7688, 7689, ...
+VOLUME_NEO4J_DATA="neo4j-data-${REPLICA_ID}"
+VOLUME_NEO4J_LOGS="neo4j-logs-${REPLICA_ID}"
+VOLUME_NEO4J_IMPORT="neo4j-import-${REPLICA_ID}"
 ```
 
 Load environment variables:
@@ -86,7 +107,9 @@ Load environment variables:
 source .env
 ```
 
-- Create `fqai-network`: `docker network create fqai-network`   
+- Create `fqai-network`: `docker network create fqai-network`
+
+- Give permissions to scripts: `chmod +x scripts/*.sh`
 
 - Start ollama (*required*): `make ollama`
 
