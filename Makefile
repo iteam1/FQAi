@@ -1,6 +1,6 @@
 .PHONY: clean help
 
-# Default target
+# Show help
 help:
 	@echo "Available targets:"
 	@echo "  clean   - Remove untracked files, directories recursively"
@@ -11,3 +11,7 @@ clean:
 	@echo "Cleaned .pytest_cache directories"
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	@echo "Cleaned __pycache__ directories"
+
+# Start docker containers
+
+# Backup docker volumes
