@@ -176,8 +176,8 @@ If you want to stop the services, safely use `docker compose down` or `docker-co
 
 
 ## Targets
-1. Initialize the codebase
-2. Complete the flexible configuration
+1. Initialize the codebase ✅
+2. Complete the flexible configuration ✅
 3. Simple RAG pipeline with Ollama (embedding model, generative model, reranker model)
 4. Complete API server with FastAPI (`/health`, `/query`, `/query/stream`, `/collections`, etc.)
 
