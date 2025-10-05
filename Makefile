@@ -13,5 +13,12 @@ clean:
 	@echo "Cleaned __pycache__ directories"
 
 # Start docker containers
+ollama:
+	@echo "Starting Ollama container..."
+	@scripts/ollama.sh
+
+cadvisor:
+	@echo "Starting cAdvisor container..."
+	@scripts/cadvisor.sh
 
 # Backup docker volumes
