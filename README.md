@@ -30,14 +30,23 @@
 
 ## Quickstart
 
-- Create a virtual environment and activate it
+**Prerequisites**
+
+- Docker `docker --version`
+- Docker Compose `docker compose --version` or `docker-compose --version`
+- Virtual environment `(.venv)` (Python 3.10)
+- Ollama image (`ollama/ollama:latest`)
+- Weaviate image (`semitechnologies/weaviate:latest`)
+- Neo4j 5.20 image (`neo4j:5.20`)
+
+- Create a virtual environment and activate it:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-- Install dependencies
+- Install dependencies:
 
 ```bash
 pip install -r requirements.txt
@@ -51,7 +60,7 @@ source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
 
-- Configure environment variables
+- Configure environment variables:
 
 ```bash
 cp .env.template .env
@@ -71,7 +80,13 @@ For Neo4j:
 
 ```
 
-- Create `fqai-network`: `docker network create fqai-network`
+Load environment variables:
+
+```bash
+source .env
+```
+
+- Create `fqai-network`: `docker network create fqai-network`   
 
 - Start ollama (*required*): `make ollama`
 
