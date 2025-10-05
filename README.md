@@ -1,5 +1,33 @@
 # FQAi
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│           Shared Docker Network: fqa-network                 │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│                   ┌─────────────────┐                        │
+│                   │  Ollama (shared)│                        │
+│                   │    :11434       │                        │
+│                   └────────┬────────┘                        │
+│                            │                                 │
+│              ┌─────────────┼─────────────┐                   │
+│              │             │             │                   │
+│         ┌────▼─────┐  ┌────▼─────┐   ┌───▼──────┐            │
+│         │   AI-1   │  │   AI-2   │   │   AI-3   │            │
+│         ├──────────┤  ├──────────┤   ├──────────┤            │
+│         │ FastAPI-1│  │ FastAPI-2│   │ FastAPI-3│            │
+│         │  :8001   │  │  :8002   │   │  :8003   │            │
+│         ├──────────┤  ├──────────┤   ├──────────┤            │
+│         │Weaviate-1│  │Weaviate-2│   │Weaviate-3│            │
+│         │  :8081   │  │  :8082   │   │  :8083   │            │
+│         ├──────────┤  ├──────────┤   ├──────────┤            │
+│         │ Neo4j-1  │  │ Neo4j-2  │   │ Neo4j-3  │            │
+│         │  :7475   │  │  :7476   │   │  :7477   │            │
+│         │  :7688   │  │  :7689   │   │  :7690   │            │
+│         └──────────┘  └──────────┘   └──────────┘            │
+└──────────────────────────────────────────────────────────────┘
+```
+
 ## Quickstart
 
 - Create a virtual environment and activate it
@@ -23,11 +51,39 @@ source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
 
+- Configure environment variables
+
+```bash
+cp .env.template .env
+```
+
+Edit the `.env` file to set the environment variables
+
+For Weaviate:
+
+```bash
+
+```
+
+For Neo4j:
+
+```bash
+
+```
+
+- Create `fqai-network`: `docker network create fqai-network`
+
+- Start ollama (*required*): `make ollama`
+
+- Start cadvisor (*optional*): `make cadvisor`
+
+- Start weaviate and neo4j (*required*): `docker compose up -d` or `docker-compose up -d`
+
 ## Targets
 1. Initialize the codebase
 2. Complete the flexible configuration
 3. Simple RAG pipeline with Ollama (embedding model, generative model, reranker model)
-4. Complete API server with FastAPI (`/health`, `/query`, `/query/stream`, etc.)
+4. Complete API server with FastAPI (`/health`, `/query`, `/query/stream`, `/collections`, etc.)
 
 ## General Process
 1. Gather the data
@@ -72,17 +128,8 @@ uv pip install -r requirements.txt
 └── README.md
 ```
 
-## Capabilities
-
-- **Contextual Retrieval**: Retrieve relevant context to provide for LLM-powered answers.
-- **Querying Graph Data with Natural Language**: Use LLMs to translate user questions into Cypher queries, enabling natural language access to graph data.
-- **Automated Reasoning**: Combine the reasoning abilities of LLMs with the structured relationships in Graph Database for more accurate and insightful responses.
-- **Conversational AI**: Build chatbots and assistants that can answer questions about complex, connected data stored in Graph Database.
-- **Knowledge Graph Construction**: Automatically construct knowledge graphs from unstructured data using LLMs, and store them in Graph Database for further analysis.
-
 ## References
 
 - [Ollama](https://ollama.com/)
 - [Weaviate](https://weaviate.io/)
 - [Neo4j](https://neo4j.com/)
-- [Code Graph RAG](https://github.com/vitali87/code-graph-rag)
