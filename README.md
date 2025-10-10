@@ -1,4 +1,4 @@
-# FQAi
+# FQA
 
 ## Architecture
 
